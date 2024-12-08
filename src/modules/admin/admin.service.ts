@@ -8,6 +8,7 @@ import { UpdateAdminDTO } from './dto/update-admin.dto';
 import { ListFilterDTO } from 'src/shared/dto/list-filter.dto';
 import { ResponsePaginationDTO } from 'src/shared/dto/response-pagination';
 import { Not, SelectQueryBuilder } from 'typeorm';
+import { Gender } from 'src/libs/enums/gender.enum';
 
 @Injectable()
 export class AdminService {
@@ -159,6 +160,31 @@ export class AdminService {
       ret.page = page;
 
       return ret;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async initialInsert(): Promise<boolean> {
+    try {
+      await this.adminRepository
+        .findOneBy({
+          firstName: 'superuser',
+        })
+        .then(async (v) => {
+          if (!v) {
+            const userWrapper = new AdminEntity();
+            userWrapper.dateOfBirth = new Date();
+            userWrapper.email = 'admin@test.dev';
+            userWrapper.firstName = 'superuser';
+            userWrapper.lastName = 'admin';
+            userWrapper.gender = Gender.MALE;
+            userWrapper.password = await HashHelper.encrypt('123456');
+            await this.adminRepository.save(userWrapper);
+          }
+        });
+
+      return true;
     } catch (error) {
       throw error;
     }

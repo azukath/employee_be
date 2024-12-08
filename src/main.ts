@@ -12,6 +12,9 @@ async function bootstrap() {
     origin: '*',
   });
 
+  const appService = app.get(AppModule);
+  await appService.seed();
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

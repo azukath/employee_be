@@ -5,6 +5,7 @@ import { EmployeeModule } from './modules/employee/employee.module';
 import { LeaveModule } from './modules/leave/leave.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AdminService } from './modules/admin/admin.service';
 
 @Module({
   imports: [
@@ -24,4 +25,10 @@ import { CacheModule } from '@nestjs/cache-manager';
     CacheModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private adminService: AdminService) {}
+
+  async seed() {
+    await Promise.all([this.adminService.initialInsert()]);
+  }
+}
